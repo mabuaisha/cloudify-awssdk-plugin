@@ -164,9 +164,9 @@ class TestAWSSDK(EcosystemTestBase):
                     'LoadBalancerName')
             if 'LifecycleHook' in node_type:
                 lifecycle_hook_command = \
-                    'aws autoscaling describe-lifecycle-hooks ' \
-                    '--auto-scaling-group-name test-autoscaling ' \
-                    '--lifecycle-hook-names {0}'.format(external_id)
+                    'aws autoscaling describe-lifecycle-hooks' \
+                    ' --auto-scaling-group-name test-autoscaling' \
+                    ' --lifecycle-hook-names {0}'.format(external_id)
                 self.check_resource_method(command=lifecycle_hook_command)
             else:
                 self.check_resource_method(external_id, node_type)
