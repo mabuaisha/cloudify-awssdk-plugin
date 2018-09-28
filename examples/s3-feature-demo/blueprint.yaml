@@ -20,7 +20,7 @@ inputs:
 
   availability_zone:
     type: string
-    default: { concat: [ { get_input: aws_region_name}, 'b' ] }
+    default: { concat: [ { get_input: aws_region_name}, 'a' ] }
 
 
 dsl_definitions:

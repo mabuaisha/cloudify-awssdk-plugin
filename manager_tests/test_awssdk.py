@@ -1,10 +1,11 @@
-# Built-in Imports
+
+# Standard Imports
 import os
 import re
 from time import sleep
 import tempfile
 
-# Cloudify Imports
+# Third Party Imports
 from ecosystem_tests import EcosystemTestBase, utils, IP_ADDRESS_REGEX
 
 
@@ -47,9 +48,9 @@ class TestAWSSDK(EcosystemTestBase):
         try:
             return {
                 'password': os.environ['ECOSYSTEM_SESSION_PASSWORD'],
-                'ec2_region_name': 'ap-northeast-1',
+                'ec2_region_name': 'us-west-1',
                 'ec2_region_endpoint': 'ec2.ap-northeast-1.amazonaws.com',
-                'availability_zone': 'ap-northeast-1b',
+                'availability_zone': 'us-west-1a',
                 'aws_secret_access_key': os.environ['AWS_SECRET_ACCESS_KEY'],
                 'aws_access_key_id': os.environ['AWS_ACCESS_KEY_ID'],
                 'instance_type': 'm4.large'
@@ -268,57 +269,57 @@ class TestAWSSDK(EcosystemTestBase):
         self.check_resources_in_deployment_deleted(
             deployment_nodes, monitored_nodes)
 
-    def test_network_deployment(self):
-        # Create a list of node templates to verify.
-        aws_nodes = [
-            'nat_gateway',
-            'nat_gateway_ip',
-            'private_subnet_routetable',
-            'public_subnet_routetable',
-            'private_subnet',
-            'public_subnet',
-            'internet_gateway',
-            'vpc'
-        ]
-        self.addCleanup(self.cleanup_deployment, 'aws-example-network')
-        # Create Deployment (Blueprint already uploaded.)
-        if utils.create_deployment('aws-example-network'):
-            raise Exception(
-                'Deployment aws-example-network failed.')
-        # Install Deployment.
-        if utils.execute_install('aws-example-network'):
-            raise Exception(
-                'Install aws-example-network failed.')
-        # Get list of nodes in the deployment.
-        deployment_nodes = \
-            utils.get_deployment_resources_by_node_type_substring(
-                'aws', self.node_type_prefix)
-        # Check that the nodes really exist.
-        self.check_resources_in_deployment_created(
-            deployment_nodes, aws_nodes)
-        self.check_nodecellar()
-        # Uninstall this deployment.
-        if utils.execute_uninstall('aws-example-network'):
-            raise Exception('Uninstall aws-example-network failed.')
-        # Check that the nodes no longer exist.
-        self.check_resources_in_deployment_deleted(
-            deployment_nodes,
-            aws_nodes)
+    # def test_network_deployment(self):
+    #     # Create a list of node templates to verify.
+    #     aws_nodes = [
+    #         'nat_gateway',
+    #         'nat_gateway_ip',
+    #         'private_subnet_routetable',
+    #         'public_subnet_routetable',
+    #         'private_subnet',
+    #         'public_subnet',
+    #         'internet_gateway',
+    #         'vpc'
+    #     ]
+    #     self.addCleanup(self.cleanup_deployment, 'aws-example-network')
+    #     # Create Deployment (Blueprint already uploaded.)
+    #     if utils.create_deployment('aws-example-network'):
+    #         raise Exception(
+    #             'Deployment aws-example-network failed.')
+    #     # Install Deployment.
+    #     if utils.execute_install('aws-example-network'):
+    #         raise Exception(
+    #             'Install aws-example-network failed.')
+    #     # Get list of nodes in the deployment.
+    #     deployment_nodes = \
+    #         utils.get_deployment_resources_by_node_type_substring(
+    #             'aws', self.node_type_prefix)
+    #     # Check that the nodes really exist.
+    #     self.check_resources_in_deployment_created(
+    #         deployment_nodes, aws_nodes)
+    #     self.check_nodecellar()
+    #     # Uninstall this deployment.
+    #     if utils.execute_uninstall('aws-example-network'):
+    #         raise Exception('Uninstall aws-example-network failed.')
+    #     # Check that the nodes no longer exist.
+    #     self.check_resources_in_deployment_deleted(
+    #         deployment_nodes,
+    #         aws_nodes)
 
-    def test_autoscaling(self):
-        blueprint_path = 'examples/autoscaling-feature-demo/test.yaml'
-        blueprint_id = 'autoscaling-{0}'.format(
-            self.application_prefix)
-        self.addCleanup(self.cleanup_deployment, blueprint_id)
-        autoscaling_nodes = ['autoscaling_group']
-        utils.check_deployment(
-            blueprint_path,
-            blueprint_id,
-            self.node_type_prefix,
-            autoscaling_nodes,
-            self.check_resources_in_deployment_created,
-            self.check_resources_in_deployment_deleted
-        )
+    # def test_autoscaling(self):
+    #     blueprint_path = 'examples/autoscaling-feature-demo/test.yaml'
+    #     blueprint_id = 'autoscaling-{0}'.format(
+    #         self.application_prefix)
+    #     self.addCleanup(self.cleanup_deployment, blueprint_id)
+    #     autoscaling_nodes = ['autoscaling_group']
+    #     utils.check_deployment(
+    #         blueprint_path,
+    #         blueprint_id,
+    #         self.node_type_prefix,
+    #         autoscaling_nodes,
+    #         self.check_resources_in_deployment_created,
+    #         self.check_resources_in_deployment_deleted
+    #     )
 
     def test_s3(self):
         blueprint_path = 'examples/s3-feature-demo/blueprint.yaml'
@@ -334,33 +335,33 @@ class TestAWSSDK(EcosystemTestBase):
             self.check_resources_in_deployment_deleted
         )
 
-    def test_sqs_sns(self):
-        blueprint_path = 'examples/sns-feature-demo/blueprint.yaml'
-        blueprint_id = 'sqs-{0}'.format(
-            self.application_prefix)
-        self.addCleanup(self.cleanup_deployment, blueprint_id)
-        sns_nodes = ['queue', 'topic']
-        utils.check_deployment(
-            blueprint_path,
-            blueprint_id,
-            self.node_type_prefix,
-            sns_nodes,
-            self.check_resources_in_deployment_created,
-            self.check_resources_in_deployment_deleted
-        )
+    # def test_sqs_sns(self):
+    #     blueprint_path = 'examples/sns-feature-demo/blueprint.yaml'
+    #     blueprint_id = 'sqs-{0}'.format(
+    #         self.application_prefix)
+    #     self.addCleanup(self.cleanup_deployment, blueprint_id)
+    #     sns_nodes = ['queue', 'topic']
+    #     utils.check_deployment(
+    #         blueprint_path,
+    #         blueprint_id,
+    #         self.node_type_prefix,
+    #         sns_nodes,
+    #         self.check_resources_in_deployment_created,
+    #         self.check_resources_in_deployment_deleted
+    #     )
 
-    def test_cfn_stack(self):
-        blueprint_path = \
-            'examples/cloudformation-feature-demo/blueprint.yaml'
-        blueprint_id = 'cfn-{0}'.format(
-            self.application_prefix)
-        self.addCleanup(self.cleanup_deployment, blueprint_id)
-        cfn_nodes = ['wordpress_example', 'HelloBucket']
-        utils.check_deployment(
-            blueprint_path,
-            blueprint_id,
-            self.node_type_prefix,
-            cfn_nodes,
-            self.check_resources_in_deployment_created,
-            self.check_resources_in_deployment_deleted
-        )
+    # def test_cfn_stack(self):
+    #     blueprint_path = \
+    #         'examples/cloudformation-feature-demo/blueprint.yaml'
+    #     blueprint_id = 'cfn-{0}'.format(
+    #         self.application_prefix)
+    #     self.addCleanup(self.cleanup_deployment, blueprint_id)
+    #     cfn_nodes = ['wordpress_example', 'HelloBucket']
+    #     utils.check_deployment(
+    #         blueprint_path,
+    #         blueprint_id,
+    #         self.node_type_prefix,
+    #         cfn_nodes,
+    #         self.check_resources_in_deployment_created,
+    #         self.check_resources_in_deployment_deleted
+    #     )
