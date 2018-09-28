@@ -324,7 +324,7 @@ class TestAWSSDK(EcosystemTestBase):
     def test_s3(self):
         blueprint_path = 'examples/s3-feature-demo/blueprint.yaml'
         blueprint_id = 's3-{0}'.format(self.application_prefix)
-        self.addCleanup(self.cleanup_deployment, blueprint_id)
+        # self.addCleanup(self.cleanup_deployment, blueprint_id)
         s3_nodes = ['bucket']
         utils.check_deployment(
             blueprint_path,
